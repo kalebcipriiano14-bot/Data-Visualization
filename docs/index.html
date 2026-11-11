@@ -554,8 +554,7 @@
             <button class="btn" type="submit">Tenho interesse</button>
           </div>
           <div class="form-ok" id="formOk">
-            Interesse registado. Entramos em contato em até 1 dia útil.
-            <a class="reset" id="baixarCsv" href="#" style="margin-left:6px">baixar planilha (CSV)</a>
+            Obrigado! Vamos continuar a conversa no WhatsApp.
           </div>
         </form>
       </div>
@@ -636,35 +635,7 @@
     alvos.forEach((el) => el.classList.add('in'));
   }
 
-  const PLANILHA_URL = "";
   const WHATSAPP_URL = "https://wa.me/5521996991424?s=t";
-
-  function lerLeads() {
-    try { return JSON.parse(localStorage.getItem('dv_leads') || '[]'); } catch (erro) { return []; }
-  }
-
-  function salvarLead(lead) {
-    const leads = lerLeads();
-    leads.push(lead);
-    localStorage.setItem('dv_leads', JSON.stringify(leads));
-    return leads;
-  }
-
-  function gerarCsv(leads) {
-    const cabecalho = ['Data', 'Nome', 'Empresa', 'Email', 'Plano', 'Mensagem'];
-    const corpo = leads.map((l) => [l.data, l.nome, l.empresa, l.email, l.plano, l.mensagem]
-      .map((v) => '"' + String(v || '').replace(/"/g, '""') + '"').join(';'));
-    return [cabecalho.join(';')].concat(corpo).join('\r\n');
-  }
-
-  document.getElementById('baixarCsv').addEventListener('click', (event) => {
-    event.preventDefault();
-    const blob = new Blob(['\uFEFF' + gerarCsv(lerLeads())], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'leads-dataviz.csv';
-    link.click();
-  });
 
   document.getElementById('form').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -675,27 +646,20 @@
       return;
     }
 
-    const lead = {
-      data: new Date().toLocaleString('pt-BR'),
-      nome: nome.value.trim(),
-      empresa: document.getElementById('empresa').value.trim(),
-      email: email.value.trim(),
-      plano: document.getElementById('plano').value,
-      mensagem: document.getElementById('msg').value.trim()
-    };
+    const empresa = document.getElementById('empresa').value.trim();
+    const plano = document.getElementById('plano').value;
+    const mensagem = document.getElementById('msg').value.trim();
 
-    salvarLead(lead);
+    const texto = [
+      'Olá! Tenho interesse em um dashboard.',
+      'Nome: ' + nome.value.trim(),
+      empresa ? 'Empresa: ' + empresa : '',
+      'Email: ' + email.value.trim(),
+      'Plano: ' + plano,
+      mensagem ? 'Necessidade: ' + mensagem : ''
+    ].filter(Boolean).join('\n');
 
-    if (PLANILHA_URL) {
-      fetch(PLANILHA_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(lead).toString()
-      });
-    }
-
-    window.open(WHATSAPP_URL, '_blank', 'noopener');
+    window.open(WHATSAPP_URL + '&text=' + encodeURIComponent(texto), '_blank', 'noopener');
 
     document.getElementById('formOk').classList.add('show');
     event.target.querySelectorAll('input, textarea, select, button').forEach((el) => { el.disabled = true; });
