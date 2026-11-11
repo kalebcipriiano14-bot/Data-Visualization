@@ -597,7 +597,7 @@
       <div class="foot-col">
         <h4>Contato</h4>
         <a href="mailto:kalebciprano0@gmail.com">kalebciprano0@gmail.com</a>
-        <a href="https://wa.me/5521996991424">WhatsApp: +55 21 99699-1424</a>
+        <a href="https://wa.me/5521996991424?s=t">WhatsApp: +55 21 99699-1424</a>
         <span>Atendimento via Google Meet</span>
       </div>
     </div>
@@ -637,6 +637,7 @@
   }
 
   const PLANILHA_URL = "";
+  const WHATSAPP_URL = "https://wa.me/5521996991424?s=t";
 
   function lerLeads() {
     try { return JSON.parse(localStorage.getItem('dv_leads') || '[]'); } catch (erro) { return []; }
@@ -693,6 +694,8 @@
         body: new URLSearchParams(lead).toString()
       });
     }
+
+    window.open(WHATSAPP_URL, '_blank', 'noopener');
 
     document.getElementById('formOk').classList.add('show');
     event.target.querySelectorAll('input, textarea, select, button').forEach((el) => { el.disabled = true; });
