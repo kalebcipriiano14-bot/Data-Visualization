@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
@@ -308,7 +308,7 @@
       <a href="#planos">Planos</a>
       <a href="#processo">Como funciona</a>
       <a href="#faq">Dúvidas</a>
-      <a href="#contacto">Contacto</a>
+      <a href="#contacto">Contato</a>
     </nav>
     <button class="header-cta" type="button" onclick="document.getElementById('contacto').scrollIntoView()">Falar com especialista</button>
     <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
@@ -320,36 +320,26 @@
     <div class="wrap hero-grid">
       <div>
         <span class="eyebrow">Business Intelligence aplicado</span>
-        <h1>Os dados estão aí.<br /><span class="grad">As decisões não.</span></h1>
-        <p class="lead">Ligamos as tuas fontes, modelamos os indicadores que importam e entregamos dashboards que respondem a três perguntas: o que está a acontecer, porquê, e o que fazer a seguir.</p>
+        <h1>Os dados você tem.<br /><span class="grad">Mas, afinal, o que fazer com eles?</span></h1>
+        <p class="lead">Transformamos seus dados em impulso para o próximo passo do seu negócio. Entregamos dashboards que respondem a três perguntas: o que está para acontecer, porquê, e o que fazer a seguir.</p>
         <div class="hero-actions">
           <button class="btn" type="button" onclick="document.getElementById('demo').scrollIntoView()">Ver demonstração ao vivo</button>
           <button class="btn ghost" type="button" onclick="document.getElementById('planos').scrollIntoView()">Ver planos</button>
         </div>
         <div class="stats">
-          <div class="stat"><b>-73%</b><span>tempo em reporting manual</span></div>
-          <div class="stat"><b>4 sem</b><span>até ao primeiro dashboard</span></div>
-          <div class="stat"><b>1 fonte</b><span>de verdade por indicador</span></div>
+          <div class="stat"><b>-73%</b><span>em tempo de análise de crescimento</span></div>
+          <div class="stat"><b>3 semanas</b><span>até os primeiros 3 dashboards</span></div>
+          <div class="stat"><b>Sua fonte</b><span>com visuais interativos e dinâmicos</span></div>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-head"><b>Visão executiva · Q4</b><span class="pills"><i></i><i></i><i></i></span></div>
-        <div class="mini-grid">
-          <div class="mini"><span>Receita</span><b class="up">R$ 1,42M</b></div>
-          <div class="mini"><span>Margem</span><b>38,4%</b></div>
-          <div class="mini"><span>Pipeline</span><b class="up">+17%</b></div>
-          <div class="mini"><span>Meta</span><b>87%</b></div>
+        <div class="panel-head"><b>Compras de clientes · por bairro</b><span class="pills"><i></i><i></i><i></i></span></div>
+        <div class="mini-grid" id="heroKpis"></div>
+        <div class="bars" id="heroBars"></div>
+        <div style="display:flex;justify-content:space-between;gap:10px;font-size:10px;color:var(--muted);margin-top:10px;letter-spacing:.04em">
+          <span>Rio de Janeiro · 10 bairros</span><span>dados fictícios</span>
         </div>
-        <div class="bars">
-          <div style="height:46%"></div>
-          <div style="height:68%"></div>
-          <div style="height:54%"></div>
-          <div style="height:88%"></div>
-          <div style="height:72%"></div>
-          <div style="height:96%"></div>
-        </div>
-        <div class="progress-line"><i style="width:87%"></i></div>
       </div>
     </div>
   </section>
@@ -364,10 +354,10 @@
       <div class="cards reveal">
         <article class="card"><div class="ico">⇄</div><h3>Integração de dados</h3><p>Ligação a ERP, CRM, bases de dados, APIs e ficheiros num pipeline fiável.</p></article>
         <article class="card"><div class="ico">∑</div><h3>Modelagem de indicadores</h3><p>Definições únicas de receita, margem e churn — documentadas e auditáveis.</p></article>
-        <article class="card"><div class="ico">▤</div><h3>Dashboards executivos</h3><p>Os 5 a 8 indicadores que realmente movem a empresa, num só ecrã.</p></article>
-        <article class="card"><div class="ico">◫</div><h3>Painéis operacionais</h3><p>Visões por equipa, região, produto ou cliente, com drill-down.</p></article>
+        <article class="card"><div class="ico">▤</div><h3>Dashboards executivos</h3><p>Os 5 a 8 indicadores que realmente movem a empresa, numa só tela.</p></article>
+        <article class="card"><div class="ico">◫</div><h3>Painéis operacionais</h3><p>Visões por equipe, região, produto ou cliente, com drill-down.</p></article>
         <article class="card"><div class="ico">◔</div><h3>Alertas e distribuição</h3><p>Atualização agendada e avisos quando um indicador sai do intervalo.</p></article>
-        <article class="card"><div class="ico">◎</div><h3>Formação e adoção</h3><p>Sessões com as equipas para o dashboard ser usado todos os dias.</p></article>
+        <article class="card"><div class="ico">◎</div><h3>Formação e adoção</h3><p>Sessões com as equipes para o dashboard ser usado todos os dias.</p></article>
       </div>
     </div>
   </section>
@@ -431,7 +421,7 @@
             <li><b>✓</b> 5 dashboards</li>
             <li><b>✓</b> Até 4 fontes de dados</li>
             <li><b>✓</b> Atualização automática</li>
-            <li><b>✓</b> Formação das equipas</li>
+            <li><b>✓</b> Formação das equipes</li>
           </ul>
           <button class="btn sm" type="button" onclick="document.getElementById('contacto').scrollIntoView()">Escolher Intermediário</button>
         </article>
@@ -458,13 +448,13 @@
     <div class="wrap">
       <div class="section-head reveal">
         <span class="kicker">Como funciona</span>
-        <h2>Do primeiro contacto ao primeiro insight em <span style="color:var(--accent)">4 semanas</span>.</h2>
+        <h2>Do primeiro contato ao primeiro insight em <span style="color:var(--accent)">3 semanas</span>.</h2>
       </div>
       <div class="steps reveal">
         <div class="step"><span>01</span><h3>Diagnóstico</h3><p>Mapeamos fontes de dados, indicadores e as perguntas que a gestão precisa de responder.</p></div>
         <div class="step"><span>02</span><h3>Modelagem</h3><p>Ligamos e limpamos os dados, definindo uma versão única de cada métrica.</p></div>
-        <div class="step"><span>03</span><h3>Construção</h3><p>Dashboards desenhados com iterações semanais junto das equipas que os vão usar.</p></div>
-        <div class="step"><span>04</span><h3>Adoção</h3><p>Formação, documentação e acompanhamento para a decisão mudar de facto.</p></div>
+        <div class="step"><span>03</span><h3>Construção</h3><p>Dashboards desenhados com iterações semanais junto das equipes que os vão usar.</p></div>
+        <div class="step"><span>04</span><h3>Adoção</h3><p>Formação, documentação e acompanhamento para a decisão mudar de fato.</p></div>
       </div>
     </div>
   </section>
@@ -477,16 +467,13 @@
       </div>
       <div class="quotes reveal">
         <blockquote class="quote">
-          <p>“Deixámos de discutir qual era o número certo. Passámos a discutir o que fazer com ele.”</p>
-          <div class="who">Direção Comercial · distribuição · 180 colaboradores</div>
+          <p>“Deixamos de discutir qual era o número certo. Passamos a discutir o que fazer com ele.”</p>
         </blockquote>
         <blockquote class="quote">
           <p>“O relatório mensal passou de dois dias para dez minutos.”</p>
-          <div class="who">Controladoria · indústria · 3 unidades</div>
         </blockquote>
         <blockquote class="quote">
           <p>“Conseguimos ver margem por cliente pela primeira vez.”</p>
-          <div class="who">Sócio · serviços B2B</div>
         </blockquote>
       </div>
     </div>
@@ -509,7 +496,7 @@
         </details>
         <details>
           <summary>Preciso de comprar licenças à parte?</summary>
-          <p>Depende da ferramenta escolhida. No caso do Power BI, a licença Pro custa cerca de R$ 80 por utilizador/mês e é paga diretamente à Microsoft. Ajudamos a dimensionar.</p>
+          <p>Depende da ferramenta escolhida. No caso do Power BI, a licença Pro custa cerca de R$ 80 por usuário/mês e é paga diretamente à Microsoft. Ajudamos a dimensionar.</p>
         </details>
         <details>
           <summary>Os meus dados ficam seguros?</summary>
@@ -527,13 +514,13 @@
     <div class="wrap">
       <div class="contact-grid">
         <div class="reveal">
-          <span class="kicker">Contacto</span>
+          <span class="kicker">Contato</span>
           <h2>Vamos começar?</h2>
-          <p style="color:var(--muted);margin-top:12px">Uma sessão de 45 minutos para mapear as tuas fontes e identificar os três indicadores com mais impacto. Sem compromisso.</p>
+          <p style="color:var(--muted);margin-top:12px">Podemos agendar uma sessão de apresentação de 30 min para entender a sua necessidade e traçar uma rota que resulte no progresso do seu negócio. Sem compromisso.</p>
           <div class="contact-list">
-            <div class="contact-item"><span class="ico" style="width:34px;height:34px;font-size:14px">✉</span><div><b>geral@datavisualization.com.br</b><span>resposta em até 1 dia útil</span></div></div>
-            <div class="contact-item"><span class="ico" style="width:34px;height:34px;font-size:14px">☎</span><div><b>+55 21 0000-0000</b><span>seg–sex, 9h–18h</span></div></div>
-            <div class="contact-item"><span class="ico" style="width:34px;height:34px;font-size:14px">◎</span><div><b>Rio de Janeiro · Brasil</b><span>atendimento remoto em todo o país</span></div></div>
+            <div class="contact-item"><span class="ico" style="width:34px;height:34px;font-size:14px">✉</span><div><b>kalebciprano0@gmail.com</b><span>resposta em até 1 dia útil</span></div></div>
+            <div class="contact-item"><span class="ico" style="width:34px;height:34px;font-size:14px">☎</span><div><b>WhatsApp: +55 21 99699-1424</b><span>seg–sex, 9h–18h</span></div></div>
+            <div class="contact-item"><span class="ico" style="width:34px;height:34px;font-size:14px">◎</span><div><b>Atendimento via Google Meet</b><span>sessões online, agendadas com antecedência</span></div></div>
           </div>
         </div>
 
@@ -564,9 +551,12 @@
             <textarea id="msg" name="msg" rows="3" placeholder="Ex.: vendas por cliente e por bairro, margem por produto..."></textarea>
           </div>
           <div class="field full">
-            <button class="btn" type="submit">Pedir diagnóstico gratuito</button>
+            <button class="btn" type="submit">Tenho interesse</button>
           </div>
-          <div class="form-ok" id="formOk">Pedido registado. Entramos em contacto em até 1 dia útil.</div>
+          <div class="form-ok" id="formOk">
+            Interesse registado. Entramos em contato em até 1 dia útil.
+            <a class="reset" id="baixarCsv" href="#" style="margin-left:6px">baixar planilha (CSV)</a>
+          </div>
         </form>
       </div>
     </div>
@@ -577,7 +567,7 @@
       <div class="cta-band reveal">
         <div>
           <h2>Pronto para ver o negócio com clareza?</h2>
-          <p>Começa com um diagnóstico gratuito de 45 minutos.</p>
+          <p>Comece com uma sessão de apresentação de 30 minutos.</p>
         </div>
         <button class="btn" type="button" onclick="document.getElementById('contacto').scrollIntoView()">Agendar agora</button>
       </div>
@@ -605,10 +595,10 @@
         <a href="#faq">Dúvidas</a>
       </div>
       <div class="foot-col">
-        <h4>Contacto</h4>
-        <a href="mailto:geral@datavisualization.com.br">geral@datavisualization.com.br</a>
-        <a href="tel:+552100000000">+55 21 0000-0000</a>
-        <span>Rio de Janeiro · Brasil</span>
+        <h4>Contato</h4>
+        <a href="mailto:kalebciprano0@gmail.com">kalebciprano0@gmail.com</a>
+        <a href="https://wa.me/5521996991424">WhatsApp: +55 21 99699-1424</a>
+        <span>Atendimento via Google Meet</span>
       </div>
     </div>
     <div class="foot-bottom">
@@ -646,6 +636,35 @@
     alvos.forEach((el) => el.classList.add('in'));
   }
 
+  const PLANILHA_URL = "";
+
+  function lerLeads() {
+    try { return JSON.parse(localStorage.getItem('dv_leads') || '[]'); } catch (erro) { return []; }
+  }
+
+  function salvarLead(lead) {
+    const leads = lerLeads();
+    leads.push(lead);
+    localStorage.setItem('dv_leads', JSON.stringify(leads));
+    return leads;
+  }
+
+  function gerarCsv(leads) {
+    const cabecalho = ['Data', 'Nome', 'Empresa', 'Email', 'Plano', 'Mensagem'];
+    const corpo = leads.map((l) => [l.data, l.nome, l.empresa, l.email, l.plano, l.mensagem]
+      .map((v) => '"' + String(v || '').replace(/"/g, '""') + '"').join(';'));
+    return [cabecalho.join(';')].concat(corpo).join('\r\n');
+  }
+
+  document.getElementById('baixarCsv').addEventListener('click', (event) => {
+    event.preventDefault();
+    const blob = new Blob(['\uFEFF' + gerarCsv(lerLeads())], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'leads-dataviz.csv';
+    link.click();
+  });
+
   document.getElementById('form').addEventListener('submit', (event) => {
     event.preventDefault();
     const nome = document.getElementById('nome');
@@ -654,6 +673,27 @@
       (nome.value.trim() ? email : nome).focus();
       return;
     }
+
+    const lead = {
+      data: new Date().toLocaleString('pt-BR'),
+      nome: nome.value.trim(),
+      empresa: document.getElementById('empresa').value.trim(),
+      email: email.value.trim(),
+      plano: document.getElementById('plano').value,
+      mensagem: document.getElementById('msg').value.trim()
+    };
+
+    salvarLead(lead);
+
+    if (PLANILHA_URL) {
+      fetch(PLANILHA_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(lead).toString()
+      });
+    }
+
     document.getElementById('formOk').classList.add('show');
     event.target.querySelectorAll('input, textarea, select, button').forEach((el) => { el.disabled = true; });
   });
@@ -785,7 +825,36 @@
     fBairro.value = '*';
     fDe.value = '2026-11-01';
     fAte.value = '2026-11-11';
-    renderDemo();
+  const heroKpis = document.getElementById('heroKpis');
+  const heroBars = document.getElementById('heroBars');
+
+  function renderHero() {
+    const receita = DADOS.reduce((acc, r) => acc + r.valor, 0);
+    const compras = DADOS.length;
+    const clientes = new Set(DADOS.map((r) => r.cliente)).size;
+    const ticket = compras ? receita / compras : 0;
+
+    heroKpis.innerHTML =
+      '<div class="mini"><span>Receita</span><b class="up">' + money(receita) + '</b></div>' +
+      '<div class="mini"><span>Compras</span><b>' + compras.toLocaleString('pt-BR') + '</b></div>' +
+      '<div class="mini"><span>Clientes</span><b>' + clientes + '</b></div>' +
+      '<div class="mini"><span>Ticket médio</span><b>' + money(ticket) + '</b></div>';
+
+    const porBairro = new Map();
+    DADOS.forEach((r) => {
+      porBairro.set(r.bairro, (porBairro.get(r.bairro) || 0) + r.valor);
+    });
+
+    const top = Array.from(porBairro.entries()).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const maior = top.length ? top[0][1] : 1;
+
+    heroBars.innerHTML = top.map((item) =>
+      '<div title="' + item[0] + ' · ' + money(item[1]) + '" style="height:' + ((item[1] / maior) * 100).toFixed(1) + '%"></div>'
+    ).join('');
+  }
+
+  renderHero();
+  renderDemo();
   });
 
   renderDemo();
