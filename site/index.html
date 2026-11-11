@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#080e19" />
+<title>Data Visualization · Dashboards e Business Intelligence</title>
+<meta name="description" content="Transformamos dados dispersos em dashboards claros. Integração de fontes, modelagem de indicadores e painéis que apoiam decisões — planos a partir de R$ 3.000." />
+<meta property="og:title" content="Data Visualization · Dashboards e Business Intelligence" />
+<meta property="og:description" content="Dashboards que transformam milhares de linhas em decisões. Planos a partir de R$ 3.000." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234fd1c5'/%3E%3Ctext x='16' y='22' font-family='Segoe UI,Arial' font-size='15' font-weight='700' fill='%2304211f' text-anchor='middle'%3EDV%3C/text%3E%3C/svg%3E" />
+<style>
+  :root{
+    --bg:#080e19;
+    --bg2:#0e1728;
+    --panel:#101d31;
+    --ink:#eaf0f8;
+    --muted:#93a3bc;
+    --accent:#4fd1c5;
+    --accent2:#ffd166;
+    --line:rgba(255,255,255,.1);
+    --radius:18px;
+    --header:68px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header) + 12px)}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+  .wrap{width:100%;max-width:1180px;margin:0 auto;padding:0 20px}
+
+  header.site{
+    position:fixed;top:0;left:0;right:0;z-index:100;height:var(--header);
+    background:rgba(8,14,25,.82);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .header-in{height:100%;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em}
+  .logo{
+    width:32px;height:32px;border-radius:9px;flex:0 0 auto;
+    background:linear-gradient(140deg,var(--accent),#1f8f8a);
+    display:grid;place-items:center;color:#04211f;font-weight:900;font-size:12px;
+  }
+  .nav-links{display:flex;align-items:center;gap:26px;font-size:14px;font-weight:600}
+  .nav-links a{color:var(--muted);transition:color .18s}
+  .nav-links a:hover{color:var(--ink)}
+  .header-cta{
+    border:0;border-radius:99px;cursor:pointer;
+    background:linear-gradient(120deg,var(--accent),#2fb3a9);color:#04211f;
+    font-weight:800;font-size:14px;padding:10px 20px;
+    box-shadow:0 10px 26px rgba(79,209,197,.25);
+  }
+  .menu-btn{
+    display:none;width:42px;height:42px;border-radius:10px;
+    border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);
+    font-size:18px;cursor:pointer;
+  }
+
+  .hero{
+    padding:calc(var(--header) + 64px) 0 72px;
+    background:
+      radial-gradient(900px 520px at 78% -12%, #16324a 0%, transparent 62%),
+      radial-gradient(700px 480px at -8% 108%, #143a38 0%, transparent 58%);
+  }
+  .hero-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:52px;align-items:center}
+  .eyebrow{
+    display:inline-block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);font-weight:800;margin-bottom:16px;
+  }
+  h1{font-size:clamp(34px,5vw,60px);line-height:1.03;letter-spacing:-.035em;font-weight:800}
+  .grad{background:linear-gradient(92deg,var(--accent),#8be9fd 55%,var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{font-size:clamp(15px,1.6vw,19px);color:var(--muted);margin-top:20px;max-width:52ch}
+  .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:.5em;
+    border-radius:99px;padding:14px 26px;font-weight:800;font-size:15px;cursor:pointer;border:0;
+    background:linear-gradient(120deg,var(--accent),#2fb3a9);color:#04211f;
+    box-shadow:0 14px 34px rgba(79,209,197,.26);transition:transform .18s, box-shadow .18s;
+  }
+  .btn:hover{transform:translateY(-2px);box-shadow:0 18px 40px rgba(79,209,197,.32)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+  .btn.ghost:hover{border-color:rgba(79,209,197,.5);background:rgba(79,209,197,.08)}
+  .btn.sm{padding:11px 20px;font-size:14px}
+
+  .stats{display:flex;gap:34px;flex-wrap:wrap;margin-top:40px;padding-top:26px;border-top:1px solid var(--line)}
+  .stat b{display:block;font-size:clamp(22px,2.4vw,30px);font-weight:800;letter-spacing:-.02em}
+  .stat span{font-size:12px;color:var(--muted);letter-spacing:.04em}
+
+  .panel{
+    background:linear-gradient(170deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+    border:1px solid var(--line);border-radius:var(--radius);padding:18px;
+    box-shadow:0 30px 80px rgba(0,0,0,.45);
+  }
+  .panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .panel-head b{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+  .pills{display:flex;gap:5px}
+  .pills i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18)}
+  .mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
+  .mini{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:11px;min-width:0}
+  .mini span{display:block;font-size:9.5px;color:var(--muted)}
+  .mini b{display:block;font-size:19px;font-weight:800;letter-spacing:-.02em;margin-top:.15em;white-space:nowrap}
+  .mini b.up{color:var(--accent)}
+  .bars{display:flex;align-items:flex-end;gap:9px;height:110px;margin-top:14px}
+  .bars div{flex:1;border-radius:5px 5px 2px 2px;background:linear-gradient(180deg,var(--accent),rgba(79,209,197,.15))}
+  .progress-line{height:7px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden;margin-top:14px}
+  .progress-line i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+
+  section{padding:72px 0}
+  .section-head{max-width:640px;margin-bottom:40px}
+  h2{font-size:clamp(26px,3.3vw,40px);line-height:1.12;letter-spacing:-.025em;font-weight:750}
+  .section-head p{color:var(--muted);margin-top:12px;font-size:16px}
+  .kicker{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);font-weight:800;margin-bottom:12px;display:block}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:18px}
+  .card{
+    background:linear-gradient(170deg, rgba(255,255,255,.055), rgba(255,255,255,.018));
+    border:1px solid var(--line);border-radius:var(--radius);padding:24px;
+    transition:border-color .2s, transform .2s, background .2s;
+  }
+  .card:hover{border-color:rgba(79,209,197,.35);transform:translateY(-2px);background:linear-gradient(170deg, rgba(79,209,197,.08), rgba(255,255,255,.02))}
+  .card h3{font-size:17px;margin:10px 0 8px;font-weight:700}
+  .card p{font-size:14px;color:var(--muted)}
+  .ico{
+    width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+    background:rgba(79,209,197,.12);border:1px solid rgba(79,209,197,.35);
+    color:var(--accent);font-size:17px;
+  }
+
+  .alt{background:linear-gradient(180deg, rgba(255,255,255,.025), transparent)}
+
+  .demo-grid{display:grid;grid-template-columns:1fr;gap:20px}
+  .filters{display:grid;grid-template-columns:1.2fr 1fr .9fr .9fr;gap:12px}
+  .filter{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .filter span{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800}
+  .filter select,.filter input{
+    font-family:inherit;font-size:14px;font-weight:600;color:#fff;
+    background:linear-gradient(135deg,#1a8f88,#146f6a);
+    border:1px solid rgba(79,209,197,.6);border-radius:10px;
+    padding:11px 12px;width:100%;outline:none;color-scheme:dark;
+    transition:box-shadow .2s,border-color .2s;
+  }
+  .filter select option{background:#0e1728;color:#fff}
+  .filter select:focus,.filter input:focus{border-color:#4fd1c5;box-shadow:0 0 0 3px rgba(79,209,197,.22)}
+  .filter input::-webkit-calendar-picker-indicator{filter:invert(1);opacity:.9}
+
+  .rank{display:flex;flex-direction:column;gap:10px}
+  .rank-row{
+    display:grid;align-items:center;
+    grid-template-columns:120px 1fr 64px 104px;
+    gap:14px;font-size:13px;
+  }
+  .rank-row.head{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:rgba(147,163,188,.75);font-weight:800}
+  .c-name{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .num-col{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+  .head .num-col{color:inherit}
+  .track{height:11px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden}
+  .track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#8be9fd);transition:width .5s cubic-bezier(.2,.8,.2,1)}
+  .rank-row.lead .track i{background:linear-gradient(90deg,var(--accent2),#ffb84d)}
+  .rank-empty{text-align:center;color:var(--muted);padding:26px 0;font-size:14px}
+  .demo-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--muted)}
+  .reset{background:none;border:0;font:inherit;font-size:12px;color:var(--accent);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0}
+
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:stretch}
+  .plan{
+    display:flex;flex-direction:column;
+    background:linear-gradient(170deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+    border:1px solid var(--line);border-radius:var(--radius);padding:28px;
+    transition:border-color .2s, transform .2s;
+  }
+  .plan:hover{transform:translateY(-3px);border-color:rgba(79,209,197,.35)}
+  .plan.hl{
+    border-color:rgba(79,209,197,.45);
+    background:linear-gradient(170deg, rgba(79,209,197,.14), rgba(79,209,197,.03));
+    box-shadow:0 24px 60px rgba(79,209,197,.1);
+  }
+  .plan .name{font-size:15px;font-weight:800;letter-spacing:.02em}
+  .plan .flag{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);font-weight:800;margin-bottom:6px}
+  .plan .amount{font-size:36px;font-weight:800;letter-spacing:-.03em;margin:14px 0 2px}
+  .plan .amount small{font-size:14px;color:var(--muted);font-weight:500;letter-spacing:0}
+  .plan .desc{font-size:13px;color:var(--muted);min-height:38px}
+  .plan ul{list-style:none;display:flex;flex-direction:column;gap:9px;margin:18px 0 24px}
+  .plan li{font-size:13.5px;color:var(--muted);display:flex;gap:8px}
+  .plan li b{color:var(--accent)}
+  .plan .btn{width:100%;margin-top:auto}
+
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .step{position:relative;padding-top:24px}
+  .step::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),rgba(79,209,197,.06))}
+  .step span{font-size:11px;letter-spacing:.16em;color:var(--accent);font-weight:800}
+  .step h3{font-size:16px;margin:8px 0 6px}
+  .step p{font-size:13.5px;color:var(--muted)}
+
+  .quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+  .quote{background:linear-gradient(170deg, rgba(255,255,255,.05), rgba(255,255,255,.015));border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+  .quote p{font-size:15px;color:var(--ink);font-weight:600;line-height:1.5}
+  .quote .who{margin-top:14px;font-size:12px;color:var(--muted);letter-spacing:.04em}
+
+  details{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;padding:0;overflow:hidden}
+  details + details{margin-top:10px}
+  summary{
+    cursor:pointer;padding:18px 20px;font-weight:650;font-size:15px;
+    list-style:none;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--accent);font-size:20px;font-weight:800;line-height:1}
+  details[open] summary::after{content:"–"}
+  details p{padding:0 20px 20px;font-size:14px;color:var(--muted)}
+
+  .contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:44px;align-items:start}
+  .contact-list{display:flex;flex-direction:column;gap:16px;margin-top:26px}
+  .contact-item{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--muted)}
+  .contact-item b{color:var(--ink);display:block;font-weight:650}
+  form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field.full{grid-column:1 / -1}
+  .field label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800}
+  .field input,.field select,.field textarea{
+    font-family:inherit;font-size:15px;color:var(--ink);
+    background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;
+    padding:12px 14px;width:100%;outline:none;resize:vertical;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(79,209,197,.6);box-shadow:0 0 0 3px rgba(79,209,197,.15)}
+  .field select{color-scheme:dark}
+  .form-ok{
+    grid-column:1 / -1;display:none;
+    background:rgba(79,209,197,.12);border:1px solid rgba(79,209,197,.4);
+    color:var(--accent);border-radius:10px;padding:14px;font-size:14px;font-weight:600;
+  }
+  .form-ok.show{display:block}
+
+  .faq-list{max-width:840px}
+  .cta-band{
+    background:linear-gradient(120deg, rgba(79,209,197,.14), rgba(139,233,253,.06) 55%, rgba(255,209,102,.1));
+    border:1px solid rgba(79,209,197,.28);border-radius:22px;
+    padding:44px;display:flex;align-items:center;justify-content:space-between;gap:26px;flex-wrap:wrap;
+  }
+  .cta-band h2{font-size:clamp(22px,2.6vw,32px)}
+  .cta-band p{color:var(--muted);margin-top:8px;font-size:15px}
+
+  footer.site{border-top:1px solid var(--line);padding:48px 0 28px;background:rgba(0,0,0,.2)}
+  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px}
+  .foot-col h4{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;font-weight:800}
+  .foot-col a,.foot-col span{display:block;font-size:13.5px;color:var(--muted);padding:4px 0}
+  .foot-col a:hover{color:var(--accent)}
+  .foot-bottom{margin-top:34px;padding-top:22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:12px;color:rgba(147,163,188,.7)}
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (max-width:960px){
+    .hero-grid{grid-template-columns:1fr;gap:34px}
+    .plans{grid-template-columns:1fr}
+    .steps{grid-template-columns:1fr 1fr}
+    .contact-grid{grid-template-columns:1fr;gap:30px}
+    .foot-grid{grid-template-columns:1fr 1fr}
+    .cta-band{padding:30px}
+  }
+  @media (max-width:760px){
+    :root{--header:60px}
+    .nav-links{
+      position:fixed;top:var(--header);left:0;right:0;
+      flex-direction:column;align-items:stretch;gap:0;
+      background:rgba(10,17,29,.98);border-bottom:1px solid var(--line);
+      padding:8px 20px 18px;display:none;
+    }
+    .nav-links.open{display:flex}
+    .nav-links a{padding:13px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:15px}
+    .header-cta{display:none}
+    .menu-btn{display:grid;place-items:center}
+    .hero{padding-top:calc(var(--header) + 36px)}
+    section{padding:52px 0}
+    .mini-grid{grid-template-columns:1fr 1fr}
+    .filters{grid-template-columns:1fr}
+    .rank-row{grid-template-columns:1fr auto;grid-template-areas:"name receita" "track track" "compras compras";row-gap:4px;gap:8px}
+    .rank-row.head{display:none}
+    .c-compras{text-align:left;font-size:11px}
+    .c-compras::after{content:" compras"}
+    .c-receita{font-size:12.5px}
+    .steps{grid-template-columns:1fr}
+    form{grid-template-columns:1fr}
+    .stats{gap:22px}
+    .demo-foot{font-size:11px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .reveal{opacity:1;transform:none;transition:none}
+    .btn:hover,.card:hover,.plan:hover{transform:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap header-in">
+    <a class="brand" href="#inicio"><span class="logo">DV</span> Data Visualization</a>
+    <nav class="nav-links" id="menu">
+      <a href="#servicos">Serviços</a>
+      <a href="#demo">Demonstração</a>
+      <a href="#planos">Planos</a>
+      <a href="#processo">Como funciona</a>
+      <a href="#faq">Dúvidas</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <button class="header-cta" type="button" onclick="document.getElementById('contacto').scrollIntoView()">Falar com especialista</button>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Abrir menu" aria-expanded="false" aria-controls="menu">☰</button>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="inicio">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">Business Intelligence aplicado</span>
+        <h1>Os dados estão aí.<br /><span class="grad">As decisões não.</span></h1>
+        <p class="lead">Ligamos as tuas fontes, modelamos os indicadores que importam e entregamos dashboards que respondem a três perguntas: o que está a acontecer, porquê, e o que fazer a seguir.</p>
+        <div class="hero-actions">
+          <button class="btn" type="button" onclick="document.getElementById('demo').scrollIntoView()">Ver demonstração ao vivo</button>
+          <button class="btn ghost" type="button" onclick="document.getElementById('planos').scrollIntoView()">Ver planos</button>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>-73%</b><span>tempo em reporting manual</span></div>
+          <div class="stat"><b>4 sem</b><span>até ao primeiro dashboard</span></div>
+          <div class="stat"><b>1 fonte</b><span>de verdade por indicador</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><b>Visão executiva · Q4</b><span class="pills"><i></i><i></i><i></i></span></div>
+        <div class="mini-grid">
+          <div class="mini"><span>Receita</span><b class="up">R$ 1,42M</b></div>
+          <div class="mini"><span>Margem</span><b>38,4%</b></div>
+          <div class="mini"><span>Pipeline</span><b class="up">+17%</b></div>
+          <div class="mini"><span>Meta</span><b>87%</b></div>
+        </div>
+        <div class="bars">
+          <div style="height:46%"></div>
+          <div style="height:68%"></div>
+          <div style="height:54%"></div>
+          <div style="height:88%"></div>
+          <div style="height:72%"></div>
+          <div style="height:96%"></div>
+        </div>
+        <div class="progress-line"><i style="width:87%"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="servicos">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Serviços</span>
+        <h2>Tudo o que precisas para <span style="color:var(--accent)">ver o negócio</span>.</h2>
+        <p>Do dado bruto ao painel em produção — sem depender de ficheiros manuais.</p>
+      </div>
+      <div class="cards reveal">
+        <article class="card"><div class="ico">⇄</div><h3>Integração de dados</h3><p>Ligação a ERP, CRM, bases de dados, APIs e ficheiros num pipeline fiável.</p></article>
+        <article class="card"><div class="ico">∑</div><h3>Modelagem de indicadores</h3><p>Definições únicas de receita, margem e churn — documentadas e auditáveis.</p></article>
+        <article class="card"><div class="ico">▤</div><h3>Dashboards executivos</h3><p>Os 5 a 8 indicadores que realmente movem a empresa, num só ecrã.</p></article>
+        <article class="card"><div class="ico">◫</div><h3>Painéis operacionais</h3><p>Visões por equipa, região, produto ou cliente, com drill-down.</p></article>
+        <article class="card"><div class="ico">◔</div><h3>Alertas e distribuição</h3><p>Atualização agendada e avisos quando um indicador sai do intervalo.</p></article>
+        <article class="card"><div class="ico">◎</div><h3>Formação e adoção</h3><p>Sessões com as equipas para o dashboard ser usado todos os dias.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo" class="alt">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Demonstração</span>
+        <h2>Compras de clientes por <span style="color:var(--accent)">localidade</span>.</h2>
+        <p>Painel interativo com dados fictícios: filtra por cliente, bairro e período — os indicadores recalculam na hora.</p>
+      </div>
+
+      <div class="panel reveal">
+        <div class="filters">
+          <label class="filter"><span>Cliente</span><select id="fCliente"></select></label>
+          <label class="filter"><span>Bairro</span><select id="fBairro"></select></label>
+          <label class="filter"><span>De</span><input type="date" id="fDe" value="2026-11-01" /></label>
+          <label class="filter"><span>Até</span><input type="date" id="fAte" value="2026-11-11" /></label>
+        </div>
+
+        <div class="mini-grid" id="demoKpis" style="margin:18px 0"></div>
+
+        <div class="rank" id="demoRank"></div>
+
+        <div class="demo-foot">
+          <span id="demoFoot"></span>
+          <button class="reset" type="button" id="resetDemo">limpar filtros</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="planos">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Planos</span>
+        <h2>Um investimento com <span style="color:var(--accent)">retorno visível</span>.</h2>
+        <p>Escopo fechado, prazo definido e entrega acompanhada. Valores em reais, sem impostos.</p>
+      </div>
+
+      <div class="plans reveal">
+        <article class="plan">
+          <div class="name">Básico</div>
+          <div class="amount">R$ 3.000 <small>/ projeto</small></div>
+          <p class="desc">Para começar a decidir com dados.</p>
+          <ul>
+            <li><b>✓</b> 3 dashboards</li>
+            <li><b>✓</b> Até 2 fontes de dados</li>
+            <li><b>✓</b> Entrega em 3 semanas</li>
+            <li><b>✓</b> Sem automações</li>
+          </ul>
+          <button class="btn ghost sm" type="button" onclick="document.getElementById('contacto').scrollIntoView()">Escolher Básico</button>
+        </article>
+
+        <article class="plan hl">
+          <div class="flag">Mais escolhido</div>
+          <div class="name">Intermediário</div>
+          <div class="amount">R$ 5.500 <small>/ projeto</small></div>
+          <p class="desc">O equilíbrio entre escopo e investimento.</p>
+          <ul>
+            <li><b>✓</b> 5 dashboards</li>
+            <li><b>✓</b> Até 4 fontes de dados</li>
+            <li><b>✓</b> Atualização automática</li>
+            <li><b>✓</b> Formação das equipas</li>
+          </ul>
+          <button class="btn sm" type="button" onclick="document.getElementById('contacto').scrollIntoView()">Escolher Intermediário</button>
+        </article>
+
+        <article class="plan">
+          <div class="name">Avançado</div>
+          <div class="amount">R$ 8.900 <small>/ projeto</small></div>
+          <p class="desc">Para operar o negócio inteiro com dados.</p>
+          <ul>
+            <li><b>✓</b> 8 dashboards</li>
+            <li><b>✓</b> Fontes ilimitadas</li>
+            <li><b>✓</b> Automações e alertas</li>
+            <li><b>✓</b> 60 dias de acompanhamento</li>
+          </ul>
+          <button class="btn ghost sm" type="button" onclick="document.getElementById('contacto').scrollIntoView()">Escolher Avançado</button>
+        </article>
+      </div>
+
+      <p style="font-size:13px;color:var(--muted);margin-top:18px">Hora de consultoria adicional: R$ 150 · Sustentação a partir de R$ 890/mês.</p>
+    </div>
+  </section>
+
+  <section id="processo" class="alt">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Como funciona</span>
+        <h2>Do primeiro contacto ao primeiro insight em <span style="color:var(--accent)">4 semanas</span>.</h2>
+      </div>
+      <div class="steps reveal">
+        <div class="step"><span>01</span><h3>Diagnóstico</h3><p>Mapeamos fontes de dados, indicadores e as perguntas que a gestão precisa de responder.</p></div>
+        <div class="step"><span>02</span><h3>Modelagem</h3><p>Ligamos e limpamos os dados, definindo uma versão única de cada métrica.</p></div>
+        <div class="step"><span>03</span><h3>Construção</h3><p>Dashboards desenhados com iterações semanais junto das equipas que os vão usar.</p></div>
+        <div class="step"><span>04</span><h3>Adoção</h3><p>Formação, documentação e acompanhamento para a decisão mudar de facto.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Quem confia</span>
+        <h2>Resultados que se medem.</h2>
+      </div>
+      <div class="quotes reveal">
+        <blockquote class="quote">
+          <p>“Deixámos de discutir qual era o número certo. Passámos a discutir o que fazer com ele.”</p>
+          <div class="who">Direção Comercial · distribuição · 180 colaboradores</div>
+        </blockquote>
+        <blockquote class="quote">
+          <p>“O relatório mensal passou de dois dias para dez minutos.”</p>
+          <div class="who">Controladoria · indústria · 3 unidades</div>
+        </blockquote>
+        <blockquote class="quote">
+          <p>“Conseguimos ver margem por cliente pela primeira vez.”</p>
+          <div class="who">Sócio · serviços B2B</div>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="alt">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Dúvidas</span>
+        <h2>Perguntas frequentes.</h2>
+      </div>
+      <div class="faq-list reveal">
+        <details>
+          <summary>Preciso de ter os dados organizados antes de começar?</summary>
+          <p>Não. O diagnóstico inicial serve exatamente para mapear o estado atual — incluindo planilhas e sistemas legados. Nós tratamos da organização.</p>
+        </details>
+        <details>
+          <summary>Em quanto tempo fico com o primeiro dashboard?</summary>
+          <p>No plano Básico, a entrega é em 3 semanas. Projetos maiores seguem um cronograma por etapas com entregas parciais a cada semana.</p>
+        </details>
+        <details>
+          <summary>Preciso de comprar licenças à parte?</summary>
+          <p>Depende da ferramenta escolhida. No caso do Power BI, a licença Pro custa cerca de R$ 80 por utilizador/mês e é paga diretamente à Microsoft. Ajudamos a dimensionar.</p>
+        </details>
+        <details>
+          <summary>Os meus dados ficam seguros?</summary>
+          <p>Sim. Trabalhamos com acessos por perfil, dados alojados na UE e rastreabilidade por indicador, em conformidade com o RGPD/LGPD.</p>
+        </details>
+        <details>
+          <summary>Fico dependente de vocês?</summary>
+          <p>Não. O modelo, a documentação e os dados pertencem ao cliente. A sustentação é opcional.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="contacto">
+    <div class="wrap">
+      <div class="contact-grid">
+        <div class="reveal">
+          <span class="kicker">Contacto</span>
+          <h2>Vamos começar?</h2>
+          <p style="color:var(--muted);margin-top:12px">Uma sessão de 45 minutos para mapear as tuas fontes e identificar os três indicadores com mais impacto. Sem compromisso.</p>
+          <div class="contact-list">
+            <div class="contact-item"><span class="ico" style="width:34px;height:34px;font-size:14px">✉</span><div><b>geral@datavisualization.com.br</b><span>resposta em até 1 dia útil</span></div></div>
+            <div class="contact-item"><span class="ico" style="width:34px;height:34px;font-size:14px">☎</span><div><b>+55 21 0000-0000</b><span>seg–sex, 9h–18h</span></div></div>
+            <div class="contact-item"><span class="ico" style="width:34px;height:34px;font-size:14px">◎</span><div><b>Rio de Janeiro · Brasil</b><span>atendimento remoto em todo o país</span></div></div>
+          </div>
+        </div>
+
+        <form class="panel reveal" id="form" novalidate>
+          <div class="field">
+            <label for="nome">Nome</label>
+            <input id="nome" name="nome" type="text" placeholder="O teu nome" required />
+          </div>
+          <div class="field">
+            <label for="empresa">Empresa</label>
+            <input id="empresa" name="empresa" type="text" placeholder="Nome da empresa" />
+          </div>
+          <div class="field full">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="nome@empresa.com" required />
+          </div>
+          <div class="field full">
+            <label for="plano">Plano de interesse</label>
+            <select id="plano" name="plano">
+              <option>Básico — R$ 3.000</option>
+              <option selected>Intermediário — R$ 5.500</option>
+              <option>Avançado — R$ 8.900</option>
+              <option>Ainda não sei</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="msg">O que gostarias de ver no dashboard?</label>
+            <textarea id="msg" name="msg" rows="3" placeholder="Ex.: vendas por cliente e por bairro, margem por produto..."></textarea>
+          </div>
+          <div class="field full">
+            <button class="btn" type="submit">Pedir diagnóstico gratuito</button>
+          </div>
+          <div class="form-ok" id="formOk">Pedido registado. Entramos em contacto em até 1 dia útil.</div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <div>
+          <h2>Pronto para ver o negócio com clareza?</h2>
+          <p>Começa com um diagnóstico gratuito de 45 minutos.</p>
+        </div>
+        <button class="btn" type="button" onclick="document.getElementById('contacto').scrollIntoView()">Agendar agora</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <a class="brand" href="#inicio" style="margin-bottom:12px"><span class="logo">DV</span> Data Visualization</a>
+        <span style="max-width:34ch">Dashboards e Business Intelligence para empresas que querem decidir com dados.</span>
+      </div>
+      <div class="foot-col">
+        <h4>Serviços</h4>
+        <a href="#servicos">Integração de dados</a>
+        <a href="#servicos">Dashboards</a>
+        <a href="#servicos">Formação</a>
+      </div>
+      <div class="foot-col">
+        <h4>Empresa</h4>
+        <a href="#processo">Como funciona</a>
+        <a href="#planos">Planos</a>
+        <a href="#faq">Dúvidas</a>
+      </div>
+      <div class="foot-col">
+        <h4>Contacto</h4>
+        <a href="mailto:geral@datavisualization.com.br">geral@datavisualization.com.br</a>
+        <a href="tel:+552100000000">+55 21 0000-0000</a>
+        <span>Rio de Janeiro · Brasil</span>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© <span id="ano"></span> Data Visualization. Todos os direitos reservados.</span>
+      <span>Dados de demonstração são fictícios.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('ano').textContent = new Date().getFullYear();
+
+  const menuBtn = document.getElementById('menuBtn');
+  const menu = document.getElementById('menu');
+  menuBtn.addEventListener('click', () => {
+    const aberto = menu.classList.toggle('open');
+    menuBtn.setAttribute('aria-expanded', String(aberto));
+    menuBtn.textContent = aberto ? '✕' : '☰';
+  });
+  menu.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => {
+    menu.classList.remove('open');
+    menuBtn.setAttribute('aria-expanded', 'false');
+    menuBtn.textContent = '☰';
+  }));
+
+  const alvos = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => {
+        if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    alvos.forEach((el) => obs.observe(el));
+  } else {
+    alvos.forEach((el) => el.classList.add('in'));
+  }
+
+  document.getElementById('form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const nome = document.getElementById('nome');
+    const email = document.getElementById('email');
+    if (!nome.value.trim() || !email.value.includes('@')) {
+      (nome.value.trim() ? email : nome).focus();
+      return;
+    }
+    document.getElementById('formOk').classList.add('show');
+    event.target.querySelectorAll('input, textarea, select, button').forEach((el) => { el.disabled = true; });
+  });
+
+  const BAIRROS = [
+    ['Barra da Tijuca', 412, 1.28], ['Copacabana', 388, 1.11], ['Tijuca', 341, 1.0],
+    ['Ipanema', 246, 1.34], ['Botafogo', 233, 1.02], ['Centro', 221, 0.96],
+    ['Méier', 198, 0.91], ['Campo Grande', 189, 0.87], ['Leblon', 121, 1.42], ['Madureira', 148, 0.85]
+  ];
+
+  const CLIENTES = [
+    'Ana Beatriz Souza', 'Carlos Eduardo Lima', 'Fernanda Alves',
+    'João Pedro Martins', 'Larissa Nogueira', 'Marcos Vinícius Rocha',
+    'Patrícia Ferreira', 'Rafael Teixeira', 'Studio Maré Design', 'Vértice Engenharia'
+  ];
+
+  let seed = 987654321;
+  function rnd() {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  }
+
+  const totalPeso = BAIRROS.reduce((acc, item) => acc + item[1], 0);
+  function pickBairro() {
+    let alvo = rnd() * totalPeso;
+    for (const item of BAIRROS) {
+      alvo -= item[1];
+      if (alvo <= 0) return item;
+    }
+    return BAIRROS[0];
+  }
+
+  const DADOS = [];
+  for (let i = 0; i < 2497; i++) {
+    const bairro = pickBairro();
+    const dia = 1 + Math.floor(rnd() * 11);
+    DADOS.push({
+      bairro: bairro[0],
+      cliente: CLIENTES[Math.floor(rnd() * CLIENTES.length)],
+      data: '2026-11-' + String(dia).padStart(2, '0'),
+      valor: 520 * bairro[2] * (0.55 + rnd() * 1.3)
+    });
+  }
+
+  const fCliente = document.getElementById('fCliente');
+  const fBairro = document.getElementById('fBairro');
+  const fDe = document.getElementById('fDe');
+  const fAte = document.getElementById('fAte');
+  const demoKpis = document.getElementById('demoKpis');
+  const demoRank = document.getElementById('demoRank');
+  const demoFoot = document.getElementById('demoFoot');
+
+  function preencher(el, itens) {
+    const todos = document.createElement('option');
+    todos.value = '*';
+    todos.textContent = 'Todos';
+    el.appendChild(todos);
+    itens.forEach((item) => {
+      const opt = document.createElement('option');
+      opt.value = item;
+      opt.textContent = item;
+      el.appendChild(opt);
+    });
+  }
+
+  function money(v) {
+    if (v >= 1e6) return 'R$ ' + (v / 1e6).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + 'M';
+    if (v >= 1e3) return 'R$ ' + (v / 1e3).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' mil';
+    return 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+  }
+
+  function renderDemo() {
+    const cliente = fCliente.value;
+    const bairro = fBairro.value;
+    const de = fDe.value;
+    const ate = fAte.value;
+
+    const selecao = DADOS.filter((r) =>
+      (cliente === '*' || r.cliente === cliente) &&
+      (bairro === '*' || r.bairro === bairro) &&
+      (!de || r.data >= de) &&
+      (!ate || r.data <= ate)
+    );
+
+    const receita = selecao.reduce((acc, r) => acc + r.valor, 0);
+    const compras = selecao.length;
+    const clientes = new Set(selecao.map((r) => r.cliente)).size;
+    const ticket = compras ? receita / compras : 0;
+
+    demoKpis.innerHTML =
+      '<div class="mini"><span>Receita</span><b class="up">' + money(receita) + '</b></div>' +
+      '<div class="mini"><span>Compras</span><b>' + compras.toLocaleString('pt-BR') + '</b></div>' +
+      '<div class="mini"><span>Clientes ativos</span><b>' + clientes + '</b></div>' +
+      '<div class="mini"><span>Ticket médio</span><b>' + money(ticket) + '</b></div>';
+
+    const porBairro = new Map();
+    selecao.forEach((r) => {
+      const atual = porBairro.get(r.bairro) || { receita: 0, compras: 0 };
+      atual.receita += r.valor;
+      atual.compras += 1;
+      porBairro.set(r.bairro, atual);
+    });
+
+    const lista = Array.from(porBairro.entries()).sort((a, b) => b[1].receita - a[1].receita);
+    const maior = lista.length ? lista[0][1].receita : 1;
+
+    let html = '<div class="rank-row head"><span class="c-name">Bairro</span><span></span><span class="c-compras num-col">Compras</span><span class="c-receita num-col">Receita</span></div>';
+    if (!lista.length) {
+      html += '<div class="rank-empty">Nenhuma compra para os filtros selecionados.</div>';
+    } else {
+      html += lista.map((item, i) =>
+        '<div class="rank-row' + (i === 0 ? ' lead' : '') + '">' +
+          '<span class="c-name" title="' + item[0] + '">' + item[0] + '</span>' +
+          '<span class="track"><i style="width:' + ((item[1].receita / maior) * 100).toFixed(1) + '%"></i></span>' +
+          '<span class="c-compras num-col">' + item[1].compras.toLocaleString('pt-BR') + '</span>' +
+          '<span class="c-receita num-col">' + money(item[1].receita) + '</span>' +
+        '</div>'
+      ).join('');
+    }
+    demoRank.innerHTML = html;
+    demoFoot.textContent = compras.toLocaleString('pt-BR') + ' compras na seleção · 10 bairros do Rio de Janeiro';
+  }
+
+  preencher(fCliente, CLIENTES);
+  preencher(fBairro, BAIRROS.map((b) => b[0]));
+  [fCliente, fBairro, fDe, fAte].forEach((el) => el.addEventListener('change', renderDemo));
+  document.getElementById('resetDemo').addEventListener('click', () => {
+    fCliente.value = '*';
+    fBairro.value = '*';
+    fDe.value = '2026-11-01';
+    fAte.value = '2026-11-11';
+    renderDemo();
+  });
+
+  renderDemo();
+</script>
+</body>
+</html>
