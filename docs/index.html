@@ -255,6 +255,11 @@
     color:var(--accent);border-radius:10px;padding:14px;font-size:14px;font-weight:600;
   }
   .form-ok.show{display:block}
+  .form-erro{grid-column:1 / -1;display:none;color:#ff8f8f;font-size:13px;font-weight:600}
+  .form-erro.show{display:block}
+  .field input.invalid,.field select.invalid,.field textarea.invalid{
+    border-color:#ff6b6b;box-shadow:0 0 0 3px rgba(255,107,107,.15);
+  }
 
   .faq-list{max-width:840px}
   .cta-band{
@@ -569,6 +574,7 @@
             <label for="msg">O que gostarias de ver no dashboard?</label>
             <textarea id="msg" name="msg" rows="3" placeholder="Ex.: vendas por cliente e por bairro, margem por produto..."></textarea>
           </div>
+          <p class="form-erro" id="formErro" role="alert"></p>
           <div class="field full">
             <button class="btn" type="submit">Tenho interesse</button>
           </div>
@@ -656,23 +662,46 @@
   const WHATSAPP_URL = "https://wa.me/5521996991424?s=t";
   const PLANILHA_URL = "https://script.google.com/macros/s/AKfycby4shZT9jRjHf21z9lfTF2J97xmxBIOrx-N3rzjH0TpAARXlAMkiU1xJbiA0-8lxMPVxA/exec";
 
-  document.getElementById('form').addEventListener('submit', (event) => {
+  const form = document.getElementById('form');
+  const formOk = document.getElementById('formOk');
+  const formErro = document.getElementById('formErro');
+
+  form.addEventListener('submit', (event) => {
     event.preventDefault();
+
     const nome = document.getElementById('nome');
+    const empresa = document.getElementById('empresa');
     const email = document.getElementById('email');
-    if (!nome.value.trim() || !email.value.includes('@')) {
-      (nome.value.trim() ? email : nome).focus();
+    const padraoEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    let primeiroInvalido = null;
+
+    [nome, empresa, email].forEach((campo) => {
+      const vazio = !campo.value.trim();
+      const emailInvalido = campo === email && !padraoEmail.test(campo.value.trim());
+      const invalido = vazio || emailInvalido;
+      campo.classList.toggle('invalid', invalido);
+      if (invalido && !primeiroInvalido) primeiroInvalido = campo;
+    });
+
+    if (primeiroInvalido) {
+      formErro.textContent = primeiroInvalido === email && email.value.trim()
+        ? 'Informe um e-mail válido para continuar.'
+        : 'Preencha os campos assinalados para continuar.';
+      formErro.classList.add('show');
+      primeiroInvalido.focus();
       return;
     }
 
-    const empresa = document.getElementById('empresa').value.trim();
+    formErro.classList.remove('show');
+
     const plano = document.getElementById('plano').value;
     const mensagem = document.getElementById('msg').value.trim();
 
     const texto = [
       'Olá! Tenho interesse em um dashboard.',
       'Nome: ' + nome.value.trim(),
-      empresa ? 'Empresa: ' + empresa : '',
+      'Empresa: ' + empresa.value.trim(),
       'Email: ' + email.value.trim(),
       'Plano: ' + plano,
       mensagem ? 'Necessidade: ' + mensagem : ''
@@ -683,7 +712,7 @@
       mode: 'no-cors',
       body: new URLSearchParams({
         nome: nome.value.trim(),
-        empresa: empresa,
+        empresa: empresa.value.trim(),
         email: email.value.trim(),
         plano: plano,
         mensagem: mensagem
@@ -692,8 +721,16 @@
 
     window.open(WHATSAPP_URL + '&text=' + encodeURIComponent(texto), '_blank', 'noopener');
 
-    document.getElementById('formOk').classList.add('show');
-    event.target.querySelectorAll('input, textarea, select, button').forEach((el) => { el.disabled = true; });
+    formOk.classList.add('show');
+    form.reset();
+    setTimeout(() => formOk.classList.remove('show'), 8000);
+  });
+
+  form.querySelectorAll('input, textarea, select').forEach((campo) => {
+    campo.addEventListener('input', () => {
+      campo.classList.remove('invalid');
+      if (!form.querySelector('.invalid')) formErro.classList.remove('show');
+    });
   });
 
   const BAIRROS = [
