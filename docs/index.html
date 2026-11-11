@@ -111,6 +111,25 @@
   .mini b.up{color:var(--accent)}
   .bars{display:flex;align-items:flex-end;gap:9px;height:110px;margin-top:14px}
   .bars div{flex:1;border-radius:5px 5px 2px 2px;background:linear-gradient(180deg,var(--accent),rgba(79,209,197,.15))}
+
+  .hero-rank{display:flex;flex-direction:column;gap:7px;margin-top:16px}
+  .hero-row{
+    display:grid;align-items:center;
+    grid-template-columns:minmax(68px,1fr) 1.15fr 36px 64px;
+    gap:8px;font-size:11px;
+  }
+  .hero-row.head{font-size:8.5px;text-transform:uppercase;letter-spacing:.14em;color:rgba(147,163,188,.7);font-weight:800}
+  .hero-row .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+  .hero-row .t{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+  .hero-row .t i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),#8be9fd)}
+  .hero-row:first-child .t i{background:linear-gradient(90deg,var(--accent2),#ffb84d)}
+  .hero-row .c,.hero-row .r{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+  .hero-row.head .c,.hero-row.head .r{color:inherit}
+
+  @media (max-width:760px){
+    .hero-row{grid-template-columns:minmax(58px,1fr) 1fr 62px}
+    .hero-row .c{display:none}
+  }
   .progress-line{height:7px;border-radius:99px;background:rgba(255,255,255,.09);overflow:hidden;margin-top:14px}
   .progress-line i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 
@@ -336,9 +355,9 @@
       <div class="panel">
         <div class="panel-head"><b>Compras de clientes · por bairro</b><span class="pills"><i></i><i></i><i></i></span></div>
         <div class="mini-grid" id="heroKpis"></div>
-        <div class="bars" id="heroBars"></div>
-        <div style="display:flex;justify-content:space-between;gap:10px;font-size:10px;color:var(--muted);margin-top:10px;letter-spacing:.04em">
-          <span>Rio de Janeiro · 10 bairros</span><span>dados fictícios</span>
+        <div class="hero-rank" id="heroRank"></div>
+        <div style="display:flex;justify-content:space-between;gap:10px;font-size:10px;color:var(--muted);margin-top:14px;letter-spacing:.04em">
+          <span id="heroFoot"></span><span>dados fictícios</span>
         </div>
       </div>
     </div>
@@ -791,8 +810,12 @@
     fBairro.value = '*';
     fDe.value = '2026-11-01';
     fAte.value = '2026-11-11';
+    renderDemo();
+  });
+
   const heroKpis = document.getElementById('heroKpis');
-  const heroBars = document.getElementById('heroBars');
+  const heroRank = document.getElementById('heroRank');
+  const heroFoot = document.getElementById('heroFoot');
 
   function renderHero() {
     const receita = DADOS.reduce((acc, r) => acc + r.valor, 0);
@@ -803,26 +826,35 @@
     heroKpis.innerHTML =
       '<div class="mini"><span>Receita</span><b class="up">' + money(receita) + '</b></div>' +
       '<div class="mini"><span>Compras</span><b>' + compras.toLocaleString('pt-BR') + '</b></div>' +
-      '<div class="mini"><span>Clientes</span><b>' + clientes + '</b></div>' +
+      '<div class="mini"><span>Clientes ativos</span><b>' + clientes + '</b></div>' +
       '<div class="mini"><span>Ticket médio</span><b>' + money(ticket) + '</b></div>';
 
     const porBairro = new Map();
     DADOS.forEach((r) => {
-      porBairro.set(r.bairro, (porBairro.get(r.bairro) || 0) + r.valor);
+      const atual = porBairro.get(r.bairro) || { receita: 0, compras: 0 };
+      atual.receita += r.valor;
+      atual.compras += 1;
+      porBairro.set(r.bairro, atual);
     });
 
-    const top = Array.from(porBairro.entries()).sort((a, b) => b[1] - a[1]).slice(0, 6);
-    const maior = top.length ? top[0][1] : 1;
+    const lista = Array.from(porBairro.entries()).sort((a, b) => b[1].receita - a[1].receita);
+    const maior = lista.length ? lista[0][1].receita : 1;
 
-    heroBars.innerHTML = top.map((item) =>
-      '<div title="' + item[0] + ' · ' + money(item[1]) + '" style="height:' + ((item[1] / maior) * 100).toFixed(1) + '%"></div>'
+    let html = '<div class="hero-row head"><span class="n">Bairro</span><span></span><span class="c">Compras</span><span class="r">Receita</span></div>';
+    html += lista.map((item) =>
+      '<div class="hero-row">' +
+        '<span class="n" title="' + item[0] + '">' + item[0] + '</span>' +
+        '<span class="t"><i style="width:' + ((item[1].receita / maior) * 100).toFixed(1) + '%"></i></span>' +
+        '<span class="c">' + item[1].compras.toLocaleString('pt-BR') + '</span>' +
+        '<span class="r">' + money(item[1].receita) + '</span>' +
+      '</div>'
     ).join('');
+    heroRank.innerHTML = html;
+
+    heroFoot.textContent = compras.toLocaleString('pt-BR') + ' compras · 10 bairros do Rio de Janeiro';
   }
 
   renderHero();
-  renderDemo();
-  });
-
   renderDemo();
 </script>
 </body>
