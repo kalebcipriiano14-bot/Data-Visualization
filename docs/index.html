@@ -654,6 +654,7 @@
   }
 
   const WHATSAPP_URL = "https://wa.me/5521996991424?s=t";
+  const PLANILHA_URL = "https://script.google.com/macros/s/AKfycby4shZT9jRjHf21z9lfTF2J97xmxBIOrx-N3rzjH0TpAARXlAMkiU1xJbiA0-8lxMPVxA/exec";
 
   document.getElementById('form').addEventListener('submit', (event) => {
     event.preventDefault();
@@ -676,6 +677,18 @@
       'Plano: ' + plano,
       mensagem ? 'Necessidade: ' + mensagem : ''
     ].filter(Boolean).join('\n');
+
+    fetch(PLANILHA_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: new URLSearchParams({
+        nome: nome.value.trim(),
+        empresa: empresa,
+        email: email.value.trim(),
+        plano: plano,
+        mensagem: mensagem
+      })
+    }).catch(() => {});
 
     window.open(WHATSAPP_URL + '&text=' + encodeURIComponent(texto), '_blank', 'noopener');
 
